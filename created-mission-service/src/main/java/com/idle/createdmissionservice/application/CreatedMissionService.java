@@ -13,10 +13,13 @@ import com.idle.createdmissionservice.infrastructure.dto.request.AcquisitionExp;
 import com.idle.createdmissionservice.infrastructure.dto.response.MissionResponse;
 import com.idle.createdmissionservice.infrastructure.dto.response.UserAcquisitionExpResponse;
 import com.idle.createdmissionservice.infrastructure.dto.response.UserResponse;
+import com.idle.createdmissionservice.infrastructure.event.AcquisitionExpEvent;
 import com.idle.createdmissionservice.infrastructure.event.CreatedMissionCompletedEvent;
-import com.idle.createdmissionservice.infrastructure.stream.in.CreatedMissionCompletedEventPublisher;
+import com.idle.createdmissionservice.infrastructure.stream.out.AcquisitionExpEventPublisher;
+import com.idle.createdmissionservice.infrastructure.stream.out.CreatedMissionCompletedEventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,6 +40,9 @@ public class CreatedMissionService {
     private final AIMissionProvider createMissionProvider;
     private final MissionAuthenticationService missionAuthenticationService;
     private final CreatedMissionCompletedEventPublisher createdMissionCompletedEventPublisher;
+    private final AcquisitionExpEventPublisher acquisitionExpEventPublisher;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private static final String CREATED_MISSION_COMPLETED_KEY = "createdMission:completed:";
 
 
     public void createMission(Long userId , CreateMission req) {
@@ -64,9 +70,13 @@ public class CreatedMissionService {
         createdMission.successAuthentication();
 
         // 사용자 경험치 추가
+        // acquisitionExpEventPublisher.publish(AcquisitionExpEvent.createEvent(mission.getExp() ,userId)))
         UserAcquisitionExpResponse res = userClient.acquisitionExp(AcquisitionExp.of(userId, mission.getExp()));
-
         createdMissionCompletedEventPublisher.publish(CreatedMissionCompletedEvent.createEvent(createdMissionId));
+
+        // Redis SET 자료형에 사용자 ID 추가
+        String key = CREATED_MISSION_COMPLETED_KEY + createdMissionId;
+        redisTemplate.opsForSet().add(key, userId);
 
         return MissionAuthenticateView.success(true, mission.getExp(), res.getUserLevel(), res.getExp());
     }

@@ -1,6 +1,6 @@
-package com.idle.createdmissionservice.infrastructure.stream.in;
+package com.idle.createdmissionservice.infrastructure.stream.out;
 
-import com.idle.createdmissionservice.infrastructure.CreatedMissionJpaRepository;
+import com.idle.createdmissionservice.infrastructure.event.AcquisitionExpEvent;
 import com.idle.createdmissionservice.infrastructure.event.CreatedMissionCompletedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,14 +14,14 @@ import java.util.function.Supplier;
 @Configuration
 @Slf4j
 @RequiredArgsConstructor
-public class CreatedMissionCompletedEventPublisher {
+public class AcquisitionExpEventPublisher {
 
-    private final Sinks.Many<CreatedMissionCompletedEvent> sink = Sinks.many().unicast().onBackpressureBuffer();
+    private final Sinks.Many<AcquisitionExpEvent> sink = Sinks.many().unicast().onBackpressureBuffer();
 
 
     // Issued Sink
     @Bean
-    public Supplier<Flux<CreatedMissionCompletedEvent>> send() {
+    public Supplier<Flux<AcquisitionExpEvent>> acquisitionExp() {
         return () -> sink.asFlux()
                 .doOnError(error -> {
                     // 에러 처리 로직
@@ -29,9 +29,8 @@ public class CreatedMissionCompletedEventPublisher {
                 });
     }
 
-    public void publish(CreatedMissionCompletedEvent event) {
+    public void publish(AcquisitionExpEvent event) {
         log.info("이벤트 발행");
         sink.tryEmitNext(event);
     }
-
 }
