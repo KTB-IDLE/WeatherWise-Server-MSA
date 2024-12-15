@@ -65,6 +65,7 @@ public class UserService {
 
     @Transactional
     public UserAcquisitionExpResponse acquisitionExp(Long userId , int exp) {
+        log.info("userId = {} " , userId);
         User user = userRepository.findById(userId).orElseThrow(() -> new BaseException(ErrorCode.NOT_FOUND_USER));
 
         // 경험치 획득 로직

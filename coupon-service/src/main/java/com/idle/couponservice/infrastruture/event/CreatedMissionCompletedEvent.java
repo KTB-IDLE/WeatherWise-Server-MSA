@@ -1,20 +1,10 @@
-package com.idle.createdmissionservice.infrastructure.event;
+package com.idle.couponservice.infrastruture.event;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Builder @NoArgsConstructor @AllArgsConstructor
-@Getter
+@Getter @Setter
 public class CreatedMissionCompletedEvent {
     private Long createdMissionId;
     private boolean isCompleted;
-
-    public static CreatedMissionCompletedEvent createEvent(Long createdMissionId) {
-        return CreatedMissionCompletedEvent.builder()
-                .createdMissionId(createdMissionId)
-                .isCompleted(true)
-                .build();
-    }
 }

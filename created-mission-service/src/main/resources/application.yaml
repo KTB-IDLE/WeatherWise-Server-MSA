@@ -10,6 +10,9 @@ spring:
         result-out-0:
           destination: ${KAFKA_RESULT_TOPIC}
           contentType: application/json  # JSON 형식으로 처리
+        send-out-0:
+          destination: ${KAFKA_UPDATE_CREATED_MISSION_RESULT_TOPIC}
+          contentType: application/json  # JSON 형식으로 처리
         check-in-0:
           destination: ${KAFKA_CHECK_TOPIC}
           contentType: application/json  # JSON 형식으로 처리
@@ -17,7 +20,7 @@ spring:
           consumer:
             max-attempts: ${KAFKA_CONSUME_MAX_ATTEMPTS}
     function:
-      definition: check;result
+      definition: check;result;send
 
 
   datasource:

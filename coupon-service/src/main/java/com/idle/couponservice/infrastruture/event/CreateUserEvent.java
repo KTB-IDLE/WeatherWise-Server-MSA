@@ -1,4 +1,4 @@
-package com.idle.authservice.infrastructure.event;
+package com.idle.couponservice.infrastruture.event;
 
 import com.idle.commonservice.auth.EProvider;
 import com.idle.commonservice.auth.ERole;

@@ -25,8 +25,24 @@ spring:
           group: ${KAFKA_CONSUME_GROUP_USER}
           consumer:
             max-attempts: ${KAFKA_CONSUME_MAX_ATTEMPTS}
+        createdMissionUpdate-in-0:
+          destination: ${KAFKA_UPDATE_CREATED_MISSION_RESULT_TOPIC}
+          contentType: application/json  # JSON 형식으로 처리
+          group: ${KAFKA_CONSUME_GROUP_UPDATE_CREATED_MISSION}
+          consumer:
+            max-attempts: ${KAFKA_CONSUME_MAX_ATTEMPTS}
+            batch-mode: false
+        createdUser-in-0:
+          destination: ${KAFKA_CREATE_USER_TOPIC}
+          contentType: application/json  # JSON 형식으로 처리
+          group: ${KAFKA_CONSUME_GROUP_CREATE_USER}
+          consumer:
+            max-attempts: ${KAFKA_CONSUME_MAX_ATTEMPTS}
+            batch-mode: false
+
+
     function:
-      definition: check;resultCreatedMission;resultUser;issued
+      definition: check;resultCreatedMission;resultUser;issued;createdMissionUpdate;createdUser
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${DB_URL}

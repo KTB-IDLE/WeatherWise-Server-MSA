@@ -54,6 +54,10 @@ dependencies {
     // WebFlux
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
+    // Spring Kafka
+    implementation 'org.springframework.cloud:spring-cloud-stream'
+    implementation 'org.springframework.cloud:spring-cloud-stream-binder-kafka'
+
     runtimeOnly 'com.mysql:mysql-connector-j'
 }
 

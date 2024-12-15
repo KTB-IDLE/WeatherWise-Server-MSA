@@ -29,7 +29,6 @@ public class CouponIssuedEventPublisher {
     }
 
     public void publishCouponIssuedEvent(CouponIssuedEvent event) {
-        System.out.println("쿠폰 지급이벤트 발행");
         issuedSink.tryEmitNext(event);
     }
 }

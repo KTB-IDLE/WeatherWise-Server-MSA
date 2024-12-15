@@ -2,7 +2,7 @@ package com.idle.userservice.application.dto.response;
 
 import com.idle.commonservice.auth.EProvider;
 import com.idle.commonservice.auth.ERole;
-import com.idle.userservice.domain.PersonalWeatherTraits;
+import com.idle.commonservice.model.PersonalWeatherTraits;
 import com.idle.userservice.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

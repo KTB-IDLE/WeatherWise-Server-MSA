@@ -1,29 +1,25 @@
 package com.idle.couponservice.infrastruture.stream.in;
 
-import com.idle.couponservice.infrastruture.CreatedMissionJpaRepository;
-import com.idle.couponservice.infrastruture.UserJpaRepository;
+import com.idle.couponservice.infrastruture.event.CreateUserEvent;
 import com.idle.couponservice.infrastruture.event.CreatedMissionCompletedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.function.Consumer;
 
 @Configuration
 @Slf4j
 @RequiredArgsConstructor
-public class CreatedMissionCompletedEventListener {
-    private final CreatedMissionEventService createdMissionEventService;
+public class CreateUserEventListener {
+    private final UserEventService userEventService;
 
     @Bean
-    public Consumer<CreatedMissionCompletedEvent> createdMissionUpdate() {
+    public Consumer<CreateUserEvent> createdUser() {
         return message -> {
             log.info("메시지 소비");
-            createdMissionEventService.updateCreatedMissionCompleteState(message.getCreatedMissionId());
+            userEventService.save(message);
         };
     }
-
 }

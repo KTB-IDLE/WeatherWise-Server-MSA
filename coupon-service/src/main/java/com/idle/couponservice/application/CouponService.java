@@ -4,6 +4,8 @@ import com.idle.commonservice.exception.BaseException;
 import com.idle.commonservice.exception.ErrorCode;
 import com.idle.couponservice.domain.Coupon;
 import com.idle.couponservice.domain.CouponRepository;
+import com.idle.couponservice.infrastruture.CreatedMissionJpaRepository;
+import com.idle.couponservice.infrastruture.UserJpaRepository;
 import com.idle.couponservice.infrastruture.event.CouponIssuedEvent;
 import com.idle.couponservice.infrastruture.event.UserConditionCheckEvent;
 import com.idle.couponservice.infrastruture.stream.in.CheckResultListener;
@@ -21,8 +23,9 @@ import java.util.UUID;
 public class CouponService {
 
     private final CouponRepository couponRepository;
-    private final CouponIssuedEventPublisher eventPublisher;
-    private final CheckResultListener checkResultListener;
+    private final UserJpaRepository userRepository;
+    private final CreatedMissionJpaRepository createdMissionRepository;
+
 
     public void getCouponList(Long userId) {
 
@@ -34,45 +37,19 @@ public class CouponService {
      */
     @Transactional
     public void receiveCoupon(Long userId, Long couponId) {
-        // 1. Coupon 의 수량이 남았는가?
-        Coupon coupon = couponRepository.findById(couponId);
-        if (!coupon.checkQuantity()) {
-            throw new BaseException(ErrorCode.EXCEEDED_QUANTITY);
+        boolean hasCoupon = userRepository.hasCoupon(userId, couponId);
+        if (!hasCoupon) {
+            throw new BaseException(ErrorCode.ALREADY_ISSUED_COUPON);
         }
 
-        // 쿠폰 발급 조건 확인을 Event 로 발행
-        String correlationId = UUID.randomUUID().toString();
-        UserConditionCheckEvent userConditionCheckEvent =
-                new UserConditionCheckEvent(correlationId , userId , couponId , LocalDateTime.now());
-        eventPublisher.publishToCheckTopic(userConditionCheckEvent);
-    }
+        boolean hasCompletedMissionToday = createdMissionRepository
+                .hasCompletedMissionToday(userId, LocalDateTime.now());
 
-    /**
-     * 이거는 동시성을 생각하지 않은 경우
-     */
-    public void receiveCouponV0(Long userId, Long couponId) {
-        // 1. Coupon 의 수량이 남았는가?
-        Coupon coupon = couponRepository.findById(couponId);
-        if (!coupon.checkQuantity()) {
-            throw new BaseException(ErrorCode.EXCEEDED_QUANTITY);
+        if (!hasCompletedMissionToday) {
+            throw new BaseException(ErrorCode.NOT_COMPLETED_ANY_MISSION);
         }
 
-        // 쿠폰 발급 조건 확인을 Event 로 발행
-        String correlationId = UUID.randomUUID().toString();
-        UserConditionCheckEvent userConditionCheckEvent =
-                new UserConditionCheckEvent(correlationId , userId , couponId , LocalDateTime.now());
+        // 쿠폰 발행
 
-        eventPublisher.publishToCheckTopic(userConditionCheckEvent);
-
-
-        // 5. Result 토픽 메시지 확인
-        if (!checkResultListener.isCouponProcessingSuccessful(correlationId)) {
-            // 어떤 곳에서 false 가 나왔는지에 따라 ErrorCode 확실하게 만들기
-            throw new BaseException(ErrorCode.COUPON_PROCESSING_FAILED);
-        }
-
-        // 쿠폰 발급을 Event 로 발행
-        CouponIssuedEvent couponIssuedEvent = new CouponIssuedEvent(userId, couponId);
-        eventPublisher.publishToIssuedTopic(couponIssuedEvent);
     }
 }

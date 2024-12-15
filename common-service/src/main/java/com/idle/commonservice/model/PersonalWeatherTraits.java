@@ -1,4 +1,4 @@
-package com.idle.userservice.domain;
+package com.idle.commonservice.model;
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;

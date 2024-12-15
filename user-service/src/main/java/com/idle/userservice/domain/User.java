@@ -8,6 +8,7 @@ import com.idle.commonservice.jpa.LevelConverter;
 import com.idle.commonservice.jpa.ExpConverter;
 import com.idle.commonservice.model.Level;
 import com.idle.commonservice.model.Exp;
+import com.idle.commonservice.model.PersonalWeatherTraits;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;

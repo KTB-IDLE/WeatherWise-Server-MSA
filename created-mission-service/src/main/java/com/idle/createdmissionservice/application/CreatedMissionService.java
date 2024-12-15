@@ -13,6 +13,8 @@ import com.idle.createdmissionservice.infrastructure.dto.request.AcquisitionExp;
 import com.idle.createdmissionservice.infrastructure.dto.response.MissionResponse;
 import com.idle.createdmissionservice.infrastructure.dto.response.UserAcquisitionExpResponse;
 import com.idle.createdmissionservice.infrastructure.dto.response.UserResponse;
+import com.idle.createdmissionservice.infrastructure.event.CreatedMissionCompletedEvent;
+import com.idle.createdmissionservice.infrastructure.stream.in.CreatedMissionCompletedEventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,7 @@ public class CreatedMissionService {
     private final MissionServiceClient missionClient;
     private final AIMissionProvider createMissionProvider;
     private final MissionAuthenticationService missionAuthenticationService;
+    private final CreatedMissionCompletedEventPublisher createdMissionCompletedEventPublisher;
 
 
     public void createMission(Long userId , CreateMission req) {
@@ -62,6 +65,8 @@ public class CreatedMissionService {
 
         // 사용자 경험치 추가
         UserAcquisitionExpResponse res = userClient.acquisitionExp(AcquisitionExp.of(userId, mission.getExp()));
+
+        createdMissionCompletedEventPublisher.publish(CreatedMissionCompletedEvent.createEvent(createdMissionId));
 
         return MissionAuthenticateView.success(true, mission.getExp(), res.getUserLevel(), res.getExp());
     }
