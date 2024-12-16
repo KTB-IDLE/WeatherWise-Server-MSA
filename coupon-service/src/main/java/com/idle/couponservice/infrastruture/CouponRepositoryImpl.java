@@ -18,4 +18,9 @@ public class CouponRepositoryImpl implements CouponRepository {
     public Coupon findById(Long couponId) {
         return couponRepository.findById(couponId).orElseThrow(() -> new BaseException(ErrorCode.NOT_FOUND_COUPON));
     }
+
+    @Override
+    public Coupon findByIdWithLock(Long couponId) {
+        return couponRepository.findByIdWithLock(couponId);
+    }
 }

@@ -7,13 +7,14 @@ import com.idle.couponservice.domain.CouponRepository;
 import com.idle.couponservice.infrastruture.CreatedMissionServiceClient;
 import com.idle.couponservice.infrastruture.UserServiceClient;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@Service
+@Service @Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CouponService {
@@ -32,7 +33,7 @@ public class CouponService {
     @Transactional
     public void receiveCoupon(Long userId, Long couponId) {
         // 1. Coupon 의 수량이 남았는가?
-        Coupon coupon = couponRepository.findById(couponId);
+        Coupon coupon = couponRepository.findByIdWithLock(couponId);
         if (!coupon.checkQuantity()) {
             throw new BaseException(ErrorCode.EXCEEDED_QUANTITY);
         }
@@ -48,9 +49,9 @@ public class CouponService {
         boolean hasSameCoupon = userClient.hasSameCoupon(userId, couponId);
 
         if (hasSameCoupon) {
+            log.info("[ALREADY_ISSUED_COUPON_ERROR] = {} " , userId);
             throw new BaseException(ErrorCode.ALREADY_ISSUED_COUPON);
         }
-
 
         // 3. 1,2번이 모두 통과된다면 Coupon 을 발급
         userClient.issuedCoupon(userId , couponId);
