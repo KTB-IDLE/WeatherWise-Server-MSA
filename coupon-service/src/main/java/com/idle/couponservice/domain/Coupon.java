@@ -23,9 +23,10 @@ public class Coupon extends BaseEntity {
     private String name;
 
     @Column(name = "quantity")
+    @Version
     private int quantity;
 
     public boolean checkQuantity() {
-        return this.quantity - 1 > 0;
+        return this.quantity-- > 0;
     }
 }

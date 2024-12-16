@@ -41,7 +41,7 @@ public class CreatedMissionService {
     private final MissionAuthenticationService missionAuthenticationService;
     private final CreatedMissionCompletedEventPublisher createdMissionCompletedEventPublisher;
     private final AcquisitionExpEventPublisher acquisitionExpEventPublisher;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
     private static final String CREATED_MISSION_COMPLETED_KEY = "createdMission:completed:";
 
 
@@ -76,7 +76,7 @@ public class CreatedMissionService {
 
         // Redis SET 자료형에 사용자 ID 추가
         String key = CREATED_MISSION_COMPLETED_KEY + createdMissionId;
-        redisTemplate.opsForSet().add(key, userId);
+        Long result = redisTemplate.opsForSet().add(key, String.valueOf(userId));
 
         return MissionAuthenticateView.success(true, mission.getExp(), res.getUserLevel(), res.getExp());
     }

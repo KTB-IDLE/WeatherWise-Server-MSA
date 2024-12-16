@@ -58,3 +58,10 @@ cloud:
 ai:
   endpoints:
     mission-auth: ${AI_ENDPOINTS_MISSION_AUTH}
+
+logging:
+  level:
+    org:
+      springframework:
+        data:
+          redis=DEBUG:

@@ -1,8 +1,6 @@
 package com.idle.couponservice.presentation;
 
 import com.idle.commonservice.annotation.UserId;
-import com.idle.commonservice.base.BaseResponse;
-import com.idle.couponservice.application.CouponIssuedService;
 import com.idle.couponservice.application.CouponService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/coupons")
 public class CouponController {
     private final CouponService couponService;
-    private final CouponIssuedService couponIssuedService;
 
     /**
      * 내가 보유하고 있는 CouponList 확인하기
@@ -31,9 +28,6 @@ public class CouponController {
      */
     @PostMapping("/{coupon-id}")
     public void receiveCoupon(@UserId Long userId , @PathVariable("coupon-id") Long couponId) {
-        // couponService.receiveCoupon(userId , couponId);
-        boolean isSuccess = couponIssuedService.allocateStock(couponId, userId);
-        if (isSuccess) log.info("지급 완료");
-        else log.info("지급 실패");
+        couponService.receiveCoupon(userId , couponId);
     }
 }

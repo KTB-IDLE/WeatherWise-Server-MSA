@@ -50,7 +50,7 @@ public class CouponIssuedEventPublisher {
         checkSink.tryEmitNext(event);
     }
 
-    public void publishToIssuedTopic(CouponIssuedEvent event) {
-        issuedSinkV0.tryEmitNext(event);
+    public void publishCouponIssuedEvent(CouponIssuedEvent event) {
+        issuedSink.tryEmitNext(event);
     }
 }
