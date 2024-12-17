@@ -117,7 +117,12 @@ func (r *Room) Run() {
 	}
 }
 
+type NameRequest struct {
+	Name string `json:"name"`
+}
+
 func (r *Room) ServeHTTP(c *gin.Context) {
+
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 
 	socket, err := upgrader.Upgrade(c.Writer, c.Request, nil)
@@ -130,7 +135,7 @@ func (r *Room) ServeHTTP(c *gin.Context) {
 		Socket: socket,
 		Send:   make(chan *message, types.MessageBufferSize),
 		Room:   r,
-		Name:   "TEMP", // Change to dynamic value if needed
+		Name:   "name", // Change to dynamic value if needed
 	}
 
 	r.Join <- client

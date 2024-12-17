@@ -7,8 +7,8 @@ import "strings"
 // 이미지나 동영상도 왔다 갔다 해야한다면 BufferSize 를 크게 만들면 된다.
 // 무작정 크다고 좋은 것은 아니지만 트래픽이 많아지게 된다면 높아지는 것을 고려
 const (
-	SocketBufferSize  = 1024
-	MessageBufferSize = 256
+	SocketBufferSize  = 2048
+	MessageBufferSize = 1024
 )
 
 type header struct {
